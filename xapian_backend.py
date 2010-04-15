@@ -30,6 +30,7 @@ from haystack.backends import BaseSearchBackend, BaseSearchQuery
 from haystack.exceptions import MissingDependency
 from haystack.fields import DateField, DateTimeField, IntegerField, FloatField, BooleanField, MultiValueField
 from haystack.models import SearchResult
+from haystack.utils import get_identifier
 
 try:
     import xapian
@@ -157,7 +158,7 @@ class SearchBackend(BaseSearchBackend):
         self.stemmer = xapian.Stem(stemming_language)
     
     def get_identifier(self, obj_or_string):
-        return DOCUMENT_ID_TERM_PREFIX + super(SearchBackend, self).get_identifier(obj_or_string)
+        return DOCUMENT_ID_TERM_PREFIX + get_identifier(obj_or_string)
     
     def update(self, index, iterable):
         """
@@ -910,12 +911,12 @@ class SearchQuery(BaseSearchQuery):
         """
         query = ''
         
-        if not self.query_filters:
+        if not self.query_filter:
             query = '*'
         else:
             query_chunks = []
             
-            for the_filter in self.query_filters:
+            for the_filter in self.query_filter:
                 if the_filter.is_and():
                     query_chunks.append('AND')
 
