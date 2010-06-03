@@ -214,7 +214,9 @@ class SearchBackend(BaseSearchBackend):
                             if field['multi_valued'] == 'false':
                                 term = _marshal_term(value)
                                 term_generator.index_text(term)
-                                term_generator.index_text(term, 1, prefix)
+                                term_generator.index_text(_marshal_term(value), 
+                                                          field.get('weight', 1), 
+                                                          prefix)
                                 if len(term.split()) == 1:
                                     document.add_term(term)
                                     document.add_term(prefix + term)
@@ -579,7 +581,11 @@ class SearchBackend(BaseSearchBackend):
                     'multi_valued': 'false',
                     'column': column,
                 }
-                
+
+                # Extra fields
+                if field_class.extra.get('weight'):
+                    field_data['weight'] = field_class.extra.get('weight')
+
                 if isinstance(field_class, (DateField, DateTimeField)):
                     field_data['type'] = 'date'
                 elif isinstance(field_class, IntegerField):
