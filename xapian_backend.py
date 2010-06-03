@@ -225,7 +225,9 @@ class SearchBackend(BaseSearchBackend):
                                 for term in value:
                                     term = _marshal_term(term)
                                     term_generator.index_text(term)
-                                    term_generator.index_text(term, 1, prefix)
+                                    term_generator.index_text(term, 
+                                                              field.get('weight', 1), 
+                                                              prefix)
                                     if len(term.split()) == 1:
                                         document.add_term(term)
                                         document.add_term(prefix + term)
